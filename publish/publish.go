@@ -7,10 +7,13 @@ import (
 	"time"
 
 	"github.com/nats-io/stan.go"
+	"github.com/rs/xid"
 )
 
 func Publish(URL, clusterID, clientID, subject string, msg []byte, async bool) error {
-	sc, err := stan.Connect(clusterID, clientID, stan.NatsURL(URL))
+	cid := fmt.Sprintf("%s-%s", clientID, xid.New().String())
+
+	sc, err := stan.Connect(clusterID, cid, stan.NatsURL(URL))
 	if err != nil {
 		return fmt.Errorf("Can't connect: %v.\nMake sure a NATS Streaming Server is running at: %s", err, URL)
 	}
